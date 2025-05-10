@@ -12,60 +12,15 @@ Buffer::Buffer()
 	topx = 0;
 }
 
-Buffer::Buffer(std::vector <std::string> cont)
+Buffer::Buffer(const std::vector <std::string>& cont)
 {
-	for (auto& line : cont) content.push_back(line);
+	for (const let& line : cont) content.push_back(line);
 	path = "";
 	x = 0;
 	y = 0;
 	topy = 0;
 	topx = 0;
 }
-
-/*
-void Buffer::render()
-{
-	if (topy > y) topy = y;
-	else if (topy + LINES - 2 < y) topy = y - (LINES - 2);
-
-	if (topx > x) topx = x;
-	else if (topx + COLS - 2 < x) topx = x - (COLS - 2);
-
-	for (u16 i = 0; i < LINES - 1; ++i)
-	{
-		u16 lineIndex = topy + i;
-		if (lineIndex >= content.size())
-		{
-			mvaddch(i, 0, '~');
-			for (u16 j = 1; j < COLS; ++j) addch(' ');
-		}
-		else
-		{
-			std::string line = content[lineIndex];
-			u16 start = topx;
-			u16 end = std::min((u32) topx + COLS - 1, (u32) line.size());
-
-			if (start > 0) mvaddch(i, 0, '<');
-			else mvaddch(i, 0, ' ');
-
-			if (start < line.length() && end > start && (u32) end - start <= (u32) line.length())
-				mvprintw(i, 1, line.substr(start, end - start).c_str());
-
-			//mvprintw(i, 1, line.substr(start, end - start).c_str());
-
-			for (u16 j = 1 + (end - start); j < COLS - 1; ++j) addch(' ');
-
-			if (line.size() != 0 && end < line.size() - 1) mvaddch(i, COLS - 1, '>');
-			else mvaddch(i, COLS - 1, ' ');
-
-		}
-	}
-
-	move(y - topy, x - topx + 1);
-	refresh();
-}
-*/
-
 
 void Buffer::render()
 {
@@ -306,7 +261,7 @@ void Buffer::command()
 void Buffer::insert(const std::string& s)
 {
 	if (content.empty()) content.push_back("");
-	for (let ch : s)
+	for (const let& ch : s)
 	{
 		if (ch == '\n') content.push_back("");
 		else if (ch == '\t') content.back() += "    ";

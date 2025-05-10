@@ -14,10 +14,6 @@ Keybind command;
 Parser parser;
 std::string command_str;
 
-void closeMessage()
-{
-}
-
 int main()
 {
 	// ncurses init
@@ -68,7 +64,7 @@ int main()
 	insert.insert({'\n'}, [](){ curbuf -> second.newline(); });
 	insert.insert({KEY_BACKSPACE}, [](){ curbuf -> second.ins_deletech(); });
 	insert.insert({'\t'}, [](){ curbuf -> second.insertch('\t'); });
-	insert.insert({' '},  [](){ curbuf -> second.insertch(' '); });
+	insert.insert({' '},	[](){ curbuf -> second.insertch(' '); });
 
 	// 33 - 127 for insert
 	/// {{{
@@ -289,58 +285,55 @@ int main()
 
 	loop
 	{
-		curbuf -> second.render();
-		c = getch();
-		switch (mode)
-		{
-		case 0:
-			normal.exec(c);
-			break;
-		case 1:
-			insert.exec(c);
-			break;
-		case 2:
-			visual.exec(c);
-			break;
-		case 3:
-			replace.exec(c);
-			break;
-		case 4:
-			while (c != '\n')
+			curbuf -> second.render();
+			c = getch();
+			switch (mode)
 			{
-				mvaddch(LINES - 1, 0, '>');
-				addch(' ');
-
-				if ((i32) command_str.size() < COLS - 3)
+			case 0:
+				normal.exec(c);
+				break;
+			case 1:
+				insert.exec(c);
+				break;
+			case 2:
+				visual.exec(c);
+				break;
+			case 3:
+				replace.exec(c);
+				break;
+			case 4:
+				while (c != '\n')
 				{
-					addstr(command_str.c_str());
-					for (u16 i = command_str.size(); i < COLS - 3; ++i) addch(' ');
-					move(LINES - 1, command_str.size() + 2);
-				}
-				else addstr(command_str.substr(command_str.size() - COLS + 3, COLS - 3).c_str());
+						mvaddch(LINES - 1, 0, '>');
+						addch(' ');
 
-				if (c == 27)
-				{
-					command_str.clear();
-					break;
-				}
+						if ((i32) command_str.size() < COLS - 3)
+						{
+							addstr(command_str.c_str());
+							for (u16 i = command_str.size(); i < COLS - 3; ++i) addch(' ');
+							move(LINES - 1, command_str.size() + 2);
+						}
+						else addstr(command_str.substr(command_str.size() - COLS + 3, COLS - 3).c_str());
 
-				refresh();
-				c = getch();
-				command.exec(c);
+						if (c == 27)
+						{
+							command_str.clear();
+							break;
+						}
+
+						refresh();
+						c = getch();
+						command.exec(c);
+				}
+				parser.parse(command_str);
+				command_str.clear();
+				mvaddch(LINES - 1, 0, ' ');
+				for (u16 i = 1; i < COLS; ++i) addch(' ');
+				mode = 0;
+				break;
+			default:
+				break;
 			}
-			parser.parse(command_str);
-			command_str.clear();
-			mvaddch(LINES - 1, 0, ' ');
-			for (u16 i = 1; i < COLS; ++i)
-			{
-				addch(' ');
-			}
-			mode = 0;
-			break;
-		default:
-			break;
-		}
 	}
 
 	endwin();

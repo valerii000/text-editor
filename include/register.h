@@ -16,7 +16,7 @@ struct Register
 	}
 	void paste(Buffer& pasteTo)
 	{
-		for (const auto& line : content)
+		for (const let& line : content)
 		{
 			pasteTo.content.insert(pasteTo.content.begin() + pasteTo.y, line);
 			pasteTo.y++;

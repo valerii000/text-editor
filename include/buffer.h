@@ -15,7 +15,7 @@ public:
 	i32 x, y, topy, topx;
 
 	Buffer();
-	Buffer(std::vector <std::string> cont);
+	Buffer(const std::vector <std::string>& cont);
 
     void render();
     void insertch(char c);

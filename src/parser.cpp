@@ -29,9 +29,10 @@ void Parser::parse(const std::string& input)
 
 std::vector <std::string> Parser::splitInput(const std::string& input)
 {
-	std::vector<std::string> words;
+	std::vector <std::string> words;
 	std::string word;
-	for (char c : input)
+
+	for (const char& c : input)
 	{
 		if (c == ' ')
 		{
@@ -41,15 +42,11 @@ std::vector <std::string> Parser::splitInput(const std::string& input)
 				word.clear();
 			}
 		}
-		else
-		{
-			word += c;
-		}
+		else word += c;
 	}
-	if (!word.empty())
-	{
-		words.push_back(word);
-	}
+
+	if (!word.empty()) words.push_back(word);
+
 	return words;
 }
 

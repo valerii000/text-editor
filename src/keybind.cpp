@@ -2,7 +2,7 @@
 
 TrieNode::~TrieNode()
 {
-	for (auto& child : children) delete child.second;
+	for (let& child : children) delete child.second;
 }
 
 Keybind::Keybind() : root(new TrieNode()), current(root) {}
@@ -15,7 +15,7 @@ Keybind::~Keybind()
 void Keybind::insert(const std::vector<u16>& Keybinding, FuncPtr func)
 {
 	TrieNode* node = root;
-	for (u16 c : Keybinding)
+	for (const u16& c : Keybinding)
 	{
 		auto it = node->children.find(c);
 		if (it == node->children.end())
