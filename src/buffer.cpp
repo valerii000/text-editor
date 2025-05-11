@@ -41,16 +41,14 @@ void Buffer::render()
 		else
 		{
 			std::string line = content[lineIndex];
-			u16 start = topx;
-			u16 end = std::min((u32) topx + COLS, (u32) line.size());
+			u32 start = std::min((u32)topx, (u32)line.size());
+			u32 end = std::min((u32) topx + COLS, (u32) line.size());
 
 			if (start > 0) mvaddch(i, 0, '<');
 			else mvaddch(i, 0, ' ');
 
 			if (start < line.length() && end > start && (u32) end - start <= (u32) line.length())
 				mvprintw(i, 1, line.substr(start, end - start).c_str());
-
-			//mvprintw(i, 1, line.substr(start, end - start).c_str());
 
 			for (u16 j = 1 + (end - start); j < COLS - 1; ++j) addch(' ');
 
@@ -78,7 +76,7 @@ void Buffer::insertch(char c)
 		content[y].insert(x, 1, c);
 	else
 		content[y].push_back(c);
-	x++;
+	++x;
 }
 
 void Buffer::deletech()
@@ -93,15 +91,6 @@ void Buffer::deletech()
 	if (x == (i32) content[y].size()) x--;
 }
 
-/*
-void Buffer::ins_deletech()
-{
-	if (content[y].size() == 0 || x == 0) return;
-	content[y].erase(x - 1, 1);
-	x--;
-}
-*/
-
 void Buffer::ins_deletech()
 {
 	if (content[y].size() == 0) return;
@@ -112,12 +101,10 @@ void Buffer::ins_deletech()
 		content.erase(content.begin() + y);
 		y--;
 		x = content[y].size() - 1;
+		return;
 	}
-	else
-	{
-		content[y].erase(x - 1, 1);
-		x--;
-	}
+	content[y].erase(x - 1, 1);
+	x--;
 }
 
 void Buffer::movecursor(u32 dy, u32 dx)
@@ -132,14 +119,14 @@ void Buffer::movecursor(u32 dy, u32 dx)
 
 void Buffer::moveLeft()
 {
-	if (x != 0) x--;
+	if (x != 0) --x;
 }
 
 void Buffer::moveDown()
 {
 	if (y != (i32) content.size() - 1)
 	{
-		y++;
+		++y;
 		if (x > (i32) content[y].size() - 1)
 		{
 
@@ -203,8 +190,9 @@ void Buffer::insertBefore()
 void Buffer::insertAfter()
 {
 	mode = 1;
+	if (content[y].size() != 0) ++x;
 	if ((x != (i32) content[y].size() - 1) || (content[y].size() != 0)) return;
-	x++;
+	++x;
 }
 
 void Buffer::insertBegin()
@@ -220,6 +208,7 @@ void Buffer::insertEnd()
 	{
 		x = content[y].size() - 1;
 		mode = 1;
+		++x;
 	}
 }
 

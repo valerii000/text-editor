@@ -1,7 +1,9 @@
 #ifndef REGISTER_H
 #define REGISTER_H
 
-/// !!! not working yet !!!
+#include "buffer.h"
+
+/// !!! does not work yet !!!
 
 struct Register
 {

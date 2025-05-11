@@ -69,7 +69,7 @@ void openCommand()
 	char cwd[256];
 	getcwd(cwd, 256);
 	curbuf -> second.content.clear();
-	curbuf -> second.path = cwd + '/' + parser.args[1];
+	curbuf -> second.path = (std::string) cwd + '/' + parser.args[1];
 	std::string line;
 	while (std::getline(file, line))
 	{
@@ -111,23 +111,22 @@ void lsCommand()
 	{
         std::string output = exec("ls");
         message_big(output);
+		return;
     }
-	else
-	{
-		std::string cmd = "ls";
-        for (u32 i = 1; i < (u32) parser.args.size(); ++i)
-             cmd += ' ' + parser.args[i];
 
-        std::string output = exec(cmd.c_str());
-        message_big(output);
-    }
+	std::string cmd = "ls";
+	for (u32 i = 1; i < (u32) parser.args.size(); ++i)
+		 cmd += ' ' + parser.args[i];
+
+	std::string output = exec(cmd.c_str());
+	message_big(output);
 }
 
 void buffersCommand()
 {
 	std::string s;
 
-	for (auto& [name, b] : buffers)
+	for (const let& [name, b] : buffers)
 	{
 		if (name.empty()) s += "[untitled]";
 		else s += name;
@@ -138,9 +137,7 @@ void buffersCommand()
 		else s += b.path;
 
 		if (&b == &curbuf->second)
-		{
 			s += " <-";
-		}
 
 		s += '\n';
 	}
@@ -174,7 +171,7 @@ void bdCurCommand()
 {
 	if (curbuf != buffers.end())
 	{
-		auto nextIt = std::next(curbuf);
+		let nextIt = std::next(curbuf);
 		buffers.erase(curbuf);
 		if (nextIt == buffers.end() && buffers.size() == 0)
 		{
@@ -182,14 +179,9 @@ void bdCurCommand()
 			curbuf = buffers.find("0");
 		}
 		else
-		{
 			curbuf = (nextIt == buffers.end()) ? --nextIt : nextIt;
-		}
 	}
-	else
-	{
-		message("no buffer selected");
-	}
+	else message("no buffer selected");
 }
 
 void bdCommand()
@@ -209,13 +201,10 @@ void bdCommand()
 		else
 		{
 			buffers.erase(it);
-			if (curbuf == buffers.end()) curbuf--;
+			if (curbuf == buffers.end()) --curbuf;
 		}
 	}
-	else
-	{
-		message("buffer not found");
-	}
+	else message("buffer not found");
 }
 
 void bufUpCommand()

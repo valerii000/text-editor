@@ -12,12 +12,12 @@ Keybind::~Keybind()
 	delete root;
 }
 
-void Keybind::insert(const std::vector<u16>& Keybinding, FuncPtr func)
+Keybind& Keybind::operator[](const std::initializer_list <u16>& keys)
 {
 	TrieNode* node = root;
-	for (const u16& c : Keybinding)
+	for (const let& c : keys)
 	{
-		auto it = node->children.find(c);
+		let it = node->children.find(c);
 		if (it == node->children.end())
 		{
 			node->children[c] = new TrieNode();
@@ -25,10 +25,12 @@ void Keybind::insert(const std::vector<u16>& Keybinding, FuncPtr func)
 		}
 		else node = it->second;
 	}
-	node->func = func;
+	current = node;
+	return *this;
 }
 
-void Keybind::exec(u16 key)
+/*
+void Keybind::operator() (u16 key)
 {
 	let it = current->children.find(key);
 	if (it != current->children.end())
@@ -42,3 +44,40 @@ void Keybind::exec(u16 key)
 	}
 	else current = root;
 }
+*/
+
+void Keybind::operator()(u16 key)
+{
+	let it = current->children.find(key);
+	if (it != current->children.end())
+	{
+		current = it->second;
+		if (current->func != nullptr)
+		{
+			current->func();
+			current = root;
+		}
+	}
+	else
+	{
+		current = root;
+		let it = current->children.find(key);
+		if (it != current->children.end())
+		{
+			current = it->second;
+			if (current->func != nullptr)
+			{
+				current->func();
+				current = root;
+			}
+		}
+	}
+}
+
+Keybind& Keybind::operator=(FuncPtr func)
+{
+	current->func = func;
+	current = root;
+	return *this;
+}
+

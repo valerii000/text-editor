@@ -17,14 +17,9 @@ void Parser::parse(const std::string& input)
 
 	auto it = commandMap.find(commandName);
 	if (it != commandMap.end())
-	{
-		// Execute the command action
 		it -> second();
-	}
 	else
-	{
 		message("command does not exist");
-	}
 }
 
 std::vector <std::string> Parser::splitInput(const std::string& input)

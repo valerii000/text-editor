@@ -24,8 +24,11 @@ public:
 	Keybind();
 	~Keybind();
 
-	void insert(const std::vector<u16>& Keybinding, FuncPtr func);
-	void exec(u16 key);
+	Keybind& operator[](const std::initializer_list<u16>& keys);
+	void operator()(u16 key);
+
+	Keybind& operator=(FuncPtr func);
 };
 
 #endif
+
