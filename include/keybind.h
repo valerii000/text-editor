@@ -7,7 +7,7 @@ typedef void (*FuncPtr)();
 
 struct TrieNode
 {
-	std::unordered_map <u16, TrieNode*> children;
+	std::unordered_map <u32, TrieNode*> children;
 	FuncPtr func;
 
 	TrieNode() : func(nullptr) {}
@@ -24,8 +24,8 @@ public:
 	Keybind();
 	~Keybind();
 
-	Keybind& operator[](const std::initializer_list<u16>& keys);
-	void operator()(u16 key);
+	Keybind& operator[](const std::initializer_list <u32>& keys);
+	void operator()(u32 key);
 
 	Keybind& operator=(FuncPtr func);
 };

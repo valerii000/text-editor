@@ -35,12 +35,9 @@
 
 inline void message(const std::string& s)
 {
-	WINDOW* mes = newwin(1, COLS, LINES - 1, 0);
-	waddstr(mes, s.c_str());
-	wrefresh(mes);
+	mvaddstr(LINES - 1, 0, s.c_str());
+	refresh();
 	getch();
-
-	delwin(mes);
 }
 
 #endif

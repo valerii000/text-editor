@@ -39,7 +39,7 @@ void saveCommand()
 	if (!file)
 	{
 		return;
-		message("file don't exist");
+		message("file doesn't exist");
 	}
 
 	for (const let& line : curbuf -> second.content)
@@ -69,6 +69,7 @@ void openCommand()
 	char cwd[256];
 	getcwd(cwd, 256);
 	curbuf -> second.content.clear();
+	curbuf -> second.content.push_back("");
 	curbuf -> second.path = (std::string) cwd + '/' + parser.args[1];
 	std::string line;
 	while (std::getline(file, line))

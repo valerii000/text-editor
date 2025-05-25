@@ -5,7 +5,8 @@ std::map <std::string, Buffer> buffers;
 Register registers[26];
 Register clipboard;
 std::map <std::string, Buffer>::iterator curbuf;
-u16 c = 0;
+u32 c = 0;
+u32 leader = ' ';
 Keybind normal;
 Keybind insert;
 Keybind visual;
@@ -23,6 +24,10 @@ int main()
 	keypad(stdscr, TRUE);
 	noecho();
 	cbreak();
+	raw();
+	intrflush(stdscr, TRUE);
+	notimeout(stdscr, TRUE);
+	meta(stdscr, TRUE);
 	start_color();
 	init_color(COLOR_ORANGE, 1000, 500, 0);
 	init_pair(1, COLOR_BLUE, COLOR_BLACK);
@@ -39,7 +44,8 @@ int main()
 
 	curbuf = buffers.begin();
 
-	normal[{0, 'q'}] = []() { endwin(); exit(0); };
+	normal[{leader, 'q'}] = []() { endwin(); exit(0); };
+	normal[{leader, leader}] = []() { mode = 4; };
 	normal[{'h'}] = []() { curbuf->second.moveLeft(); };
 	normal[{'j'}] = []() { curbuf->second.moveDown(); };
 	normal[{'k'}] = []() { curbuf->second.moveUp(); };
@@ -311,7 +317,8 @@ int main()
 				if ((i32) command_str.size() < COLS - 3)
 				{
 					addstr(command_str.c_str());
-					for (u16 i = command_str.size(); i < COLS - 3; ++i) addch(' ');
+					//for (u16 i = command_str.size(); i < COLS - 3; ++i) addch(' ');
+					clrtoeol();
 					move(LINES - 1, command_str.size() + 2);
 				}
 				else addstr(command_str.substr(command_str.size() - COLS + 3, COLS - 3).c_str());
@@ -329,7 +336,8 @@ int main()
 			parser.parse(command_str);
 			command_str.clear();
 			mvaddch(LINES - 1, 0, ' ');
-			for (u16 i = 1; i < COLS; ++i) addch(' ');
+			//for (u16 i = 1; i < COLS; ++i) addch(' ');
+			clrtoeol();
 			mode = 0;
 			break;
 		default:

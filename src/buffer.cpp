@@ -28,7 +28,7 @@ void Buffer::render()
 	else if (topy + LINES - 3 < y) topy = y - (LINES - 3);
 
 	if (topx > x) topx = x;
-	else if (topx + COLS - 2 < x) topx = x - (COLS - 2);
+	else if (topx + COLS - 3 < x) topx = x - (COLS - 3);
 
 	for (u16 i = 0; i < LINES - 2; ++i)
 	{
@@ -36,7 +36,8 @@ void Buffer::render()
 		if (lineIndex >= content.size())
 		{
 			mvaddch(i, 0, '~');
-			for (u16 j = 1; j < COLS; ++j) addch(' ');
+			//for (u16 j = 1; j < COLS; ++j) addch(' ');
+			clrtoeol();
 		}
 		else
 		{
@@ -44,15 +45,26 @@ void Buffer::render()
 			u32 start = std::min((u32)topx, (u32)line.size());
 			u32 end = std::min((u32) topx + COLS, (u32) line.size());
 
-			if (start > 0) mvaddch(i, 0, '<');
+			if (start > 0)
+			{
+				attron(COLOR_PAIR(5));
+				mvaddch(i, 0, '<');
+				attroff(COLOR_PAIR(5));
+			}
 			else mvaddch(i, 0, ' ');
 
 			if (start < line.length() && end > start && (u32) end - start <= (u32) line.length())
-				mvprintw(i, 1, line.substr(start, end - start).c_str());
+				mvaddstr(i, 1, line.substr(start, end - start).c_str());
 
-			for (u16 j = 1 + (end - start); j < COLS - 1; ++j) addch(' ');
+			//for (u16 j = 1 + (end - start); j < COLS - 1; ++j) addch(' ');
+			clrtoeol();
 
-			if (line.size() != 0 && end < line.size() - 1) mvaddch(i, COLS - 1, '>');
+			if (line.size() > (u32) topx + COLS - 2)
+			{
+				attron(COLOR_PAIR(5));
+				mvaddch(i, COLS - 1, '>');
+				attroff(COLOR_PAIR(5));
+			}
 			else mvaddch(i, COLS - 1, ' ');
 
 		}
@@ -62,9 +74,10 @@ void Buffer::render()
 	std::string info;
 	if (path == "") info = "[scratch]";
 	else info = path;
-	mvprintw(LINES - 2, 0, info.c_str());
-	for (u16 j = info.size(); j < COLS - pos.length(); ++j) addch(' ');
-	mvprintw(LINES - 2, COLS - pos.length() - 1, pos.c_str());
+	mvaddstr(LINES - 2, 0, info.c_str());
+	//for (u16 j = info.size(); j < COLS - pos.length(); ++j) addch(' ');
+	clrtoeol();
+	mvaddstr(LINES - 2, COLS - pos.length() - 1, pos.c_str());
 
 	move(y - topy, x - topx + 1);
 	refresh();

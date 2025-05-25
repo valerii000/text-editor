@@ -12,7 +12,7 @@ Keybind::~Keybind()
 	delete root;
 }
 
-Keybind& Keybind::operator[](const std::initializer_list <u16>& keys)
+Keybind& Keybind::operator[](const std::initializer_list <u32>& keys)
 {
 	TrieNode* node = root;
 	for (const let& c : keys)
@@ -29,24 +29,7 @@ Keybind& Keybind::operator[](const std::initializer_list <u16>& keys)
 	return *this;
 }
 
-/*
-void Keybind::operator() (u16 key)
-{
-	let it = current->children.find(key);
-	if (it != current->children.end())
-	{
-		current = it->second;
-		if (current->func != nullptr)
-		{
-			current->func();
-			current = root;
-		}
-	}
-	else current = root;
-}
-*/
-
-void Keybind::operator()(u16 key)
+void Keybind::operator()(u32 key)
 {
 	let it = current->children.find(key);
 	if (it != current->children.end())
