@@ -1,21 +1,18 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -g
-LDFLAGS = -lncurses
+CXXFLAGS = -Wall -Wextra -std=c++23
+LDFLAGS = 
 
 # Directories
 SRC_DIR = src
 OBJ_DIR = obj
-BIN_DIR = bin
+BIN_DIR = build
 TEST_DIR = tests
-RES_DIR = results
 
 # Source files and object files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 TEST_FILES = $(wildcard $(TEST_DIR)/*)
-
-DATE = $(shell date "+%d-%m-%Y_%H:%M:%S")
 
 # Executable name
 TARGET = $(BIN_DIR)/bin
@@ -46,16 +43,13 @@ run:
 
 # Test target
 test:
-	@mkdir -p $(RES_DIR); \
-	RES_FILE=$(RES_DIR)/$(DATE); \
-	touch $$RES_FILE; \
+	@result=''; \
 	for TEST_FILE in $(TEST_FILES); do \
-		echo "[$$TEST_FILE]" >> $$RES_FILE; \
-		$(TARGET) < $$TEST_FILE >> $$RES_FILE; \
-		echo "" >> $$RES_FILE; \
-		echo "" >> $$RES_FILE; \
+		result+=$$(echo "[$$TEST_FILE]\n"); \
+		result+=$$($(TARGET) < $$TEST_FILE); \
+		result+='\n\n'; \
 	done; \
-	cat $$RES_FILE;
+	echo -e $$result
 
 testlist:
 	@for TEST_FILE in $(TEST_FILES); do \
@@ -69,16 +63,8 @@ addtest:
 	echo "Enter test content (^D for exit):"; \
 	cat > $(TEST_DIR)/$$name
 
-# Result target
-result:
-	@cat $(RES_DIR)/*;
-
-# Clean results target
-cleanr:
-	@rm -rf $(RES_DIR)/*
-
 cleant:
 	@rm -rf $(TEST_DIR)/*
 
 # Phony targets
-.PHONY: all clean
+.PHONY: build clean
